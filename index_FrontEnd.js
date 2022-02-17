@@ -67,7 +67,7 @@ let app = new Vue({
       
       N_Space = { spaces: this.lessons[i].spaces };
       console.log(N_Space);
-      fetch("https://cst3145cw2-be.herokuapp.com/collection/lessons/" + idheader, {
+      fetch("https://cst3145cw2-be.herokuapp.com/collection/lessons"+"/" + idheader, {
         method: "PUT", 
         headers: {
           "Content-Type": "application/json", 
