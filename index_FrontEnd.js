@@ -28,20 +28,7 @@ let app = new Vue({
       canAddToCart(lesson) {
           return lesson.spaces > this.cartCount(lesson.id);
       },
-      updateSpaces() {
-          for (let i = 0; i < this.lessons.length; i++) {
-              if (this.lessons[i].spaces < 5) {
-                  var availability = { "spaces": this.lessons[i].spaces }
-                  fetch("https://cst3145cw2-be.herokuapp.com/collection/lessons"+this.lessons[i]._id, {
-                          method: 'PUT',
-                          headers: {
-                              'Content-Type': 'application/json'
-                          },
-                          body: JSON.stringify(availability)
-                       })
-              }
-          }
-      },
+   
       removeItem(lesson, index) {
           console.log("Item to be removed: " + index);
           this.cart.splice(index, 1);
@@ -60,21 +47,43 @@ let app = new Vue({
       showCheckout() {
           this.showLessons = !this.showLessons;
       },
-      checkout() {
-          this.order.content.push(this.cart);
-          console.log("proceeding for checkout");
-          fetch('https://cst3145cw2-be.herokuapp.com/collection/orders', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(this.order)
-          });
-          console.log("Order added to records" + JSON.stringify(this.order));
-          alert("Thanks for your order");
-          this.updateSpaces();
-          this.showCheckout();
-          this.cart=[];
-          this.order=[];
+
+      checkout(){
+            
+        this.order.content.push(this.cart);
+        console.log("proceeding for checkout");
+        fetch('https://cst3145cw2-be.herokuapp.com/collection/orders', 
+        {
+          method: 'POST', 
+        headers: {'Content-Type': 'application/json', 
+      
       },
+      body: JSON.stringify(this.order) 
+      
+        })
+
+        for (var i = 0; i < this.cart.length; i++) {
+           idheader = this.lessons[i]._id;
+      
+      N_Space = { spaces: this.lessons[i].spaces };
+      console.log(N_Space);
+      fetch("https://cst3145cw2-be.herokuapp.com/collection/lessons/" + idheader, {
+        method: "PUT", 
+        headers: {
+          "Content-Type": "application/json", 
+        },
+   
+        body:JSON.stringify(N_Space),
+      });
+    }
+      alert("Order Sucessfully Placed");    
+      console.log("Order Placed");
+      this.showCheckout();
+      this.cart=[];
+      this.order=[];
+      },
+    
+
       SortByAttribute() {
           var attribute = document.querySelector('input[name="attribute"]:checked').value;
           var dir = document.querySelector('input[name="direction"]:checked');
