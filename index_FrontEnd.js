@@ -134,6 +134,7 @@ let app = new Vue({
         }
         
     }
+    
    });
     
    
