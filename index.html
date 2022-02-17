@@ -1,141 +1,162 @@
 <html lang="en">
- 
-<head>
-   <meta charset="UTF-8">
-   <title>CST3145 CW2 FE</title>
-   <link rel="preconnect" href="https://fonts.gstatic.com">
-   <meta charset="utf-8">
-   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-   <meta name="viewport" content="width=device-width, initial-scale=1">
-   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
-   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
- 
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
-   integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
- 
-    <link href="tailwind.css" rel="stylesheet" type="text/css" />
-</head>
- 
-<body>
-   <main id="app">
-      
-       <main id="app">
-           <h1 class="text-center text-6xl p-4 flex w-full bg-blue-500 text-white font-bold justify-between ">Lessons
-           <nav class=" navbar navbar-expand-md bg-blue navbar-light shadow-sm sticky-top text-right float-right">
-          
-                  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-                   <span class="navbar-toggler-icon mr-auto "></span></button>
-                   <div class="collapse navbar-collapse" id="collapsibleNavbar">
-               <button class=" btn btn-info navbar-btn mt-2 ml-10 text-center " v-on:click="showCheckout" :disabled="canViewCart">
-                   {{cartItemCount}}
-                  
-                   <span class="fas fa-shopping-cart "></span> Cart
-             
-               </button>
-           </div>
-       </nav>
-       </h1>
-        <h1 v-if="showLessons" class="mt-5 ml-5 text-center text-6xl p-4 ">Lessons</h1>
- 
- 
-       <div class="row mr-0 center-block" v-if="showLessons">
-          
-           <div >
-               <!-- Creating Radio Buttons for sorting with them calling SortByAttribute function on click-->
-                  <h2 class="font-bold">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sort Item By:</h2>
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input name="attribute"  type="radio" value="title" v-on:click="SortByAttribute"><label>Subject</label>
-                  &nbsp;<input name="attribute"  type="radio" value="price" v-on:click="SortByAttribute" > <label> Price</label>
-                  &nbsp;<input name="attribute"  type="radio" value="location" v-on:click="SortByAttribute"><label> Location</label>
-                  &nbsp;<input name="attribute"  type="radio" value="spaces" v-on:click="SortByAttribute"><label> Availability </label><br>
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input name="direction"  type="radio" value=1 v-on:click="SortByAttribute"><label> Ascending</label>
-                  &nbsp;<input name="direction"  type="radio" value=-1 v-on:click="SortByAttribute"><label> Descending</label>
-              </div>
- 
- 
-           <div class="row col-sm-10 ">
-               <div class="col-sm-4" v-for="lesson in lessons">
-                   <div class="lesson shadow-sm card mt-3 ml-3  " style="width:350px">
-                       <img class="card-img-top img-fluid " v-bind:src="lesson.image" alt="image here"
-                           style="width:100%">
- 
-                       <div class="card-body">
-                           <h3 class="card-title text center font-bold">{{lesson.title}}</h3>
-                           <p class="card-text">Price : {{lesson.price}}</p>
-                           <p class="card-text"> Location: {{lesson.location}}</p>
-                           <p class="card-text"> Spaces : {{lesson.spaces}}</p>
-                           <div>
-                           <span v-for="n in lesson.rating"><i class="fas fa-star "></i></span> <!-- Checking rating from lessons and displaying accordingly for individual items in array -->
-                           <span v-for="n in 5-lesson.rating"><i class="far fa-star"></i></span>
-                       </div>
-                           <button class="btn text-white bg-green-600 bg-opacity-2 text-center p-1 float-right" v-on:click="addToCart(lesson)"
-                               v-if="canAddToCart(lesson)">Add To Cart</button>
- 
-                           <button class="btn text-white bg-red-600 bg-opacity-2 text-center p-1 float-right " disabled="disabled" v-else>Add To Cart</button>
-                           <span v-if="lesson.spaces === cartCount(lesson.id)">All Out!</span>
-                           <span v-else-if="lesson.spaces - cartCount(lesson.id) < 5">
-                              {{lesson.spaces - cartCount(lesson.id)}} left only!</span>
-                       </div>
-                   </div>
-               </div>
-           </div>
-       </div>
-       </div>
- 
- 
- 
-       <div v-else>
-           <h1 class="mt-5 ml-5 text-center text-6xl p-4 ">Cart</h1>
- 
-           <button class="btn text-white bg-gray-600 bg-opacity-2 text-center p-1 float-left ml-3 " v-on:click="showCheckout">Back To Lessons</button>
-          
-           <div class="row ml-0 mr-0">
-               <div class="col-sm-4" v-for="item in cart">
-                   <div class="card shadow-sm  mt-5 ml-3 mr-3" style="width:300px" height="100px">
-                       <img class="card-img-top img-fluid center-block " v-bind:src="item.image" alt="Card image"
-                           style="width:80%">
- 
-                       <div class="card-body">
-                           <h3 class="card-title font-bold text-center text-3xl ">{{item.title}}</h3>
-                           <p class="card-text">Price : {{item.price}}</p>
-                           <p class="card-text"> Location: {{item.location}}</p>
- 
-                           <button class="btn btn-danger float-right"  v-on:click="removeItem(item,cart.indexOf(item))">
-                               <p class="fas fa-minus-circle"></p></button>
-                </div>
- 
- 
- 
-                   </div>
-               </div>
-            </div>  
-               <div class="text-center text-6xl p-4 flex w-full bg-gray-600 text-white font-bold justify-between float-left ">
-                   <h1 class='font-bold'> Checkout Now </h1>
-                   <form v-on:submit.prevent="checkout" class="form-horizontal">
-                       <div class="form-group">
-                           <label class="control-label col-sm-2 float-left">Full Name:</label>
-                           <div class="col-sm-10">
-                               <input type="text" class="form-control" onkeypress="return /[a-z, ]/i.test(event.key)" placeholder="Enter Full Name" v-model="order.name" > <!--First of two tests to check field of being alphabet only -->
-                           </div>
-                       </div>
-                       <div class="form-group">
-                           <label class="control-label col-sm-2 float-left">Phone Number:</label>
-                           <div class="col-sm-10">
-                               <input type="text"  class="form-control" onkeypress="return /[1,2,3,4,5,6,7,8,9,0]/i.test(event.key)" v-model.number="order.number" placeholder="Enter Phone Number"> <!--First of two tests to check field of being number only -->
-                           </div>
-                       </div>
- 
-                      
-                       <div class="form-group">
-                           <div class="col-sm-offset-2 col-sm-10">
-                               <button type="submit" class="btn btn-primary float-right bg-green-600" v-if="canCheckout">Checkout</button>
-                               <button type="submit" class="btn btn-primary float-right bg-red-600" style="background: rgb(124, 3, 3);" v-else disabled>Checkout</button>
-                           </div>
-                       </div>
-                   </form>
-               </div>
-   </main>
-</body>
- <script src="index_FrontEnd.js"></script>
- 
-</html>
 
+<head>
+    <meta charset="UTF-8">
+    <title>CST3145 CW2 FE</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <meta charset="utf-8">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+    <link href="tailwind.css" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+    <main id="app">
+
+        <main id="app">
+            <h1 class="text-center text-6xl p-4 flex w-full bg-blue-500 text-white font-bold justify-between ">Lessons
+                <nav class=" navbar navbar-expand-md bg-blue navbar-light shadow-sm sticky-top text-right float-right">
+
+                    <button class="navbar-toggler" type="button" data-toggle="collapse"
+                        data-target="#collapsibleNavbar">
+                        <span class="navbar-toggler-icon mr-auto "></span></button>
+                    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                        <button class=" btn btn-info navbar-btn mt-2 ml-10 text-center " v-on:click="showCheckout"
+                            :disabled="canViewCart">
+                            {{cartItemCount}}
+
+                            <span class="fas fa-shopping-cart "></span> Cart
+
+                        </button>
+                    </div>
+                </nav>
+            </h1>
+            <h1 v-if="showLessons" class="mt-5 ml-5 text-center text-6xl p-4 ">Lessons</h1>
+
+
+            <div class="row mr-0 center-block" v-if="showLessons">
+
+                <div>
+                    <!-- Creating Radio Buttons for sorting with them calling SortByAttribute function on click-->
+                    <h2 class="font-bold">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sort Item By:</h2>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input name="attribute" type="radio" value="title"
+                        v-on:click="SortByAttribute"><label>Subject</label>
+                    &nbsp;<input name="attribute" type="radio" value="price" v-on:click="SortByAttribute"> <label>
+                        Price</label>
+                    &nbsp;<input name="attribute" type="radio" value="location" v-on:click="SortByAttribute"><label>
+                        Location</label>
+                    &nbsp;<input name="attribute" type="radio" value="spaces" v-on:click="SortByAttribute"><label>
+                        Availability </label><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input name="direction" type="radio" value=1
+                        v-on:click="SortByAttribute"><label> Ascending</label>
+                    &nbsp;<input name="direction" type="radio" value=-1 v-on:click="SortByAttribute"><label>
+                        Descending</label>
+                </div>
+
+
+                <div class="row col-sm-10 ">
+                    <div class="col-sm-4" v-for="lesson in lessons">
+                        <div class="lesson shadow-sm card mt-3 ml-3  " style="width:350px">
+                            <img class="card-img-top img-fluid " v-bind:src="lesson.image" alt="image here"
+                                style="width:100%">
+
+                            <div class="card-body">
+                                <h3 class="card-title text center font-bold">{{lesson.title}}</h3>
+                                <p class="card-text">Price : {{lesson.price}}</p>
+                                <p class="card-text"> Location: {{lesson.location}}</p>
+                                <p class="card-text"> Spaces : {{lesson.spaces}}</p>
+                                <div>
+                                    <span v-for="n in lesson.rating"><i class="fas fa-star "></i></span>
+                                    <!-- Checking rating from lessons and displaying accordingly for individual items in array -->
+                                    <span v-for="n in 5-lesson.rating"><i class="far fa-star"></i></span>
+                                </div>
+                                <button class="btn text-white bg-green-600 bg-opacity-2 text-center p-1 float-right"
+                                    v-on:click="addToCart(lesson)" v-if="canAddToCart(lesson)">Add To Cart</button>
+
+                                <button class="btn text-white bg-red-600 bg-opacity-2 text-center p-1 float-right "
+                                    disabled="disabled" v-else>Add To Cart</button>
+                                <span v-if="lesson.spaces === cartCount(lesson.id)">All Out!</span>
+                                <span v-else-if="lesson.spaces - cartCount(lesson.id) < 5">
+                                    {{lesson.spaces - cartCount(lesson.id)}} left only!</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+
+
+            <div v-else>
+                <h1 class="mt-5 ml-5 text-center text-6xl p-4 ">Cart</h1>
+
+                <button class="btn text-white bg-gray-600 bg-opacity-2 text-center p-1 float-left ml-3 "
+                    v-on:click="showCheckout">Back To Lessons</button>
+
+                <div class="row ml-0 mr-0">
+                    <div class="col-sm-4" v-for="item in cart">
+                        <div class="card shadow-sm  mt-5 ml-3 mr-3" style="width:300px" height="100px">
+                            <img class="card-img-top img-fluid center-block " v-bind:src="item.image" alt="Card image"
+                                style="width:80%">
+
+                            <div class="card-body">
+                                <h3 class="card-title font-bold text-center text-3xl ">{{item.title}}</h3>
+                                <p class="card-text">Price : {{item.price}}</p>
+                                <p class="card-text"> Location: {{item.location}}</p>
+
+                                <button class="btn btn-danger float-right"
+                                    v-on:click="removeItem(item,cart.indexOf(item))">
+                                    <p class="fas fa-minus-circle"></p>
+                                </button>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="text-center text-6xl p-4 flex w-full bg-gray-600 text-white font-bold justify-between float-left ">
+                    <h1 class='font-bold'> Checkout Now </h1>
+                    <form v-on:submit.prevent="checkout" class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-sm-2 float-left">Full Name:</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" onkeypress="return /[a-z, ]/i.test(event.key)"
+                                    placeholder="Enter Full Name" v-model="order.name">
+                                <!--First of two tests to check field of being alphabet only -->
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2 float-left">Phone Number:</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control"
+                                    onkeypress="return /[1,2,3,4,5,6,7,8,9,0]/i.test(event.key)"
+                                    v-model.number="order.number" placeholder="Enter Phone Number">
+                                <!--First of two tests to check field of being number only -->
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit" class="btn btn-primary float-right bg-green-600"
+                                    v-if="canCheckout">Checkout</button>
+                                <button type="submit" class="btn btn-primary float-right bg-red-600"
+                                    style="background: rgb(124, 3, 3);" v-else disabled>Checkout</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+        </main>
+</body>
+<script src="index_FrontEnd.js"></script>
+
+</html>
